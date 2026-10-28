@@ -1,0 +1,62 @@
+[project]
+name = "intelligent-llm-gateway"
+version = "0.1.0"
+description = "Learning project: LLM API gateway with MLOps/LLMOps practices"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12,<3.13"
+# Runtime: what the gateway image needs to serve requests
+dependencies = [
+    # Week 1: API
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "httpx>=0.28",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "pyyaml>=6.0",
+    # Week 3: observability
+    "prometheus-client>=0.21",
+    "opentelemetry-api>=1.28",
+    "opentelemetry-sdk>=1.28",
+    "opentelemetry-exporter-otlp>=1.28",
+    "opentelemetry-instrumentation-fastapi>=0.49b0",
+    "opentelemetry-instrumentation-httpx>=0.49b0",
+    # Week 5: load the trained router model at serving time
+    "scikit-learn>=1.5",
+    "joblib>=1.4",
+]
+
+[dependency-groups]
+# Development / CI tooling
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "ruff>=0.8",
+    "locust>=2.32",          # Week 3: load testing
+]
+# Week 5: offline training only, never shipped in the gateway image
+ml = [
+    "pandas>=2.2",
+    "mlflow>=2.18",
+    "dvc>=3.56",
+]
+# Week 4 (optional): LLM tracing
+llm = [
+    "langfuse>=3.0",
+]
+
+[tool.uv]
+# `uv sync` installs every group locally; Docker/CI should use `uv sync --no-dev --no-default-groups`
+default-groups = "all"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
